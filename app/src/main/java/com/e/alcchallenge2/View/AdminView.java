@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,14 +37,16 @@ public class AdminView extends AppCompatActivity {
 
     private EditText productname, productdescrip, price;
     private ProgressDialog dialog;
+    private ImageView itemimage;
+    private Toolbar toolbar;
 
     private DatabaseReference db;
     private StorageReference mStorageReference;
 
     private int Request_code = 1000;
     private Uri imageUri = null;
-    private ImageView itemimage;
-    private Toolbar toolbar;
+    private String uriImage;
+
     private ItemModel itemModel;
 
     @Override
@@ -84,7 +87,7 @@ public class AdminView extends AppCompatActivity {
                 StorageReference mstorageRef = mStorageReference.child("ACLImage").child(imageUri.getLastPathSegment());
                 mstorageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
 
-                    String uriImage = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                    uriImage = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
 
                     itemModel.setImageuri(uriImage);
 //                    Picasso.get().load(uriImage)
@@ -125,15 +128,19 @@ public class AdminView extends AppCompatActivity {
         itemModel.setProductname(pName);
         itemModel.setProductprice(pPrice);
 
-        dialog=ProgressDialog.show(this,"Uploading ","Please Wait......",false,false);
+        if(!TextUtils.isEmpty(pName) && !TextUtils.isEmpty(pPrice) && !TextUtils.isEmpty(pDescription) && imageUri !=null ){
 
-        db.setValue(itemModel).addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                Intent intent= new Intent(AdminView.this, UserView.class);
-                startActivity(intent);
-            }
-        }).addOnFailureListener(error->{
-            Toast.makeText(AdminView.this, error.getMessage(),Toast.LENGTH_LONG).show();
-        });
+            dialog=ProgressDialog.show(this,"Uploading ","Please Wait......",false,false);
+
+            db.setValue(itemModel).addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    Intent intent= new Intent(AdminView.this, UserView.class);
+                    startActivity(intent);
+                }
+            }).addOnFailureListener(error->{
+                Toast.makeText(AdminView.this, error.getMessage(),Toast.LENGTH_LONG).show();
+            });
+        }else Toast.makeText(this,"Please Enter All The Details",Toast.LENGTH_LONG).show();
+
     }
 }

@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.e.alcchallenge2.Adapter.ItemAdapter;
@@ -30,6 +32,7 @@ public class UserView extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private UserView userView;
+    private ProgressBar progressBar;
 
     private DatabaseReference db;
 
@@ -42,6 +45,7 @@ public class UserView extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         recyclerView=findViewById(R.id.recyclerview);
+        progressBar=findViewById(R.id.progressLoad);
 
         LinearLayoutManager llm= new LinearLayoutManager(this);
         llm.setOrientation(RecyclerView.VERTICAL);
@@ -86,13 +90,12 @@ public class UserView extends AppCompatActivity {
 
                     for(DataSnapshot snapshot:dataSnapshot.getChildren()){
 
-                        String key=   snapshot.getKey();
                         ProductList productList= snapshot.getValue(ProductList.class);
                         productLists.add(productList);
 
-                        Toast.makeText(UserView.this,key,Toast.LENGTH_LONG).show();
                     }
                     if(productLists.size()>0){
+                        progressBar.setVisibility(View.GONE);
                         ItemAdapter itemAdapter= new ItemAdapter(productLists,UserView.this);
                         recyclerView.setAdapter(itemAdapter);
                     }
@@ -106,7 +109,6 @@ public class UserView extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Toast.makeText(UserView.this,databaseError.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
     }

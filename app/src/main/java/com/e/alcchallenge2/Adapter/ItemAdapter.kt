@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.e.alcchallenge2.Model.ItemModel
 import com.e.alcchallenge2.Model.ProductList
 import com.e.alcchallenge2.R
@@ -33,9 +34,10 @@ class ItemAdapter(var items:ArrayList<ProductList>, val context: Context): Recyc
         holder.proddescrip.text= items[position].productdscrip
         holder.prodprice.text= items[position].productprice
 
-        Picasso.get()
+        Glide.with(context)
                 .load(items[position].imageuri)
                 .into(holder.pimage)
+
     }
 
     class mHolderView(itemView: View) : RecyclerView.ViewHolder(itemView){
